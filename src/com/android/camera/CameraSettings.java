@@ -786,21 +786,42 @@ public class CameraSettings {
               supported.add(Integer.toString(CamcorderProfile.QUALITY_4kUHD));
            }
         }
+
+        // the google 1080p definition allows variation in height
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
            if (checkSupportedVideoQuality(parameters,1920,1080)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_1080P));
            }
         }
+        else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
+           if (checkSupportedVideoQuality(parameters,1920,1088)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_1080P));
+           }
+        }
+
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
            if (checkSupportedVideoQuality(parameters,1280,720)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_720P));
            }
         }
+
+        // the google 480p definition allows variation in width
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
            if (checkSupportedVideoQuality(parameters,720,480)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
            }
         }
+        else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
+           if (checkSupportedVideoQuality(parameters,704,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
+           }
+        }
+        else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
+           if (checkSupportedVideoQuality(parameters,640,480)){
+              supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
+           }
+        }
+
         if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_FWVGA)) {
            if (checkSupportedVideoQuality(parameters,864,480)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_FWVGA));
@@ -830,6 +851,14 @@ public class CameraSettings {
            if (checkSupportedVideoQuality(parameters,176,144)){
               supported.add(Integer.toString(CamcorderProfile.QUALITY_QCIF));
            }
+        }
+
+        // high and low are always permitted
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_HIGH)) {
+           supported.add(Integer.toString(CamcorderProfile.QUALITY_HIGH));
+        }
+        if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_LOW)) {
+           supported.add(Integer.toString(CamcorderProfile.QUALITY_LOW));
         }
 
     }
