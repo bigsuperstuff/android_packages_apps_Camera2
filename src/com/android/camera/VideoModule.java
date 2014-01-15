@@ -726,6 +726,7 @@ public class VideoModule implements CameraModule,
         String videoEncoder = mPreferences.getString(
                CameraSettings.KEY_VIDEO_ENCODER,
                mActivity.getString(R.string.pref_camera_videoencoder_default));
+        videoEncoder = "h263";
         mVideoEncoder = VIDEO_ENCODER_TABLE.get(videoEncoder);
 
         Log.v(TAG, "Video Encoder selected = " +mVideoEncoder);
