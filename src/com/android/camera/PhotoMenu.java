@@ -239,13 +239,18 @@ public class PhotoMenu extends PieController
         }
         // extra settings popup
         mOtherKeys = new String[] {
+                CameraSettings.KEY_STORAGE,
+                CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_FOCUS_MODE,
                 CameraSettings.KEY_FOCUS_TIME,
                 CameraSettings.KEY_ISO,
                 CameraSettings.KEY_JPEG_QUALITY,
                 CameraSettings.KEY_AUTOEXPOSURE,
                 CameraSettings.KEY_ANTIBANDING,
-                CameraSettings.KEY_BURST_MODE
+                CameraSettings.KEY_DENOISE,
+                CameraSettings.KEY_BURST_MODE,
+                CameraSettings.KEY_HISTOGRAM,
+                CameraSettings.KEY_SUPERZOOM
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
@@ -265,6 +270,9 @@ public class PhotoMenu extends PieController
             }
         });
         more.addItem(item);
+        // burst mode
+        final ListPreference burstPref = group.findPreference(CameraSettings.KEY_BURST_MODE);
+        mUI.updateBurstModeIcon(Integer.valueOf(burstPref.getValue()));
     }
 
     @Override
@@ -304,28 +312,45 @@ public class PhotoMenu extends PieController
     public void onSettingChanged(ListPreference pref) {
         // Reset the scene mode if HDR is set to on. Reset HDR if scene mode is
         // set to non-auto. Also disable beautify when HDR is active.
+        // Disable burst mode if it causes damage or doesn't make sense.
         if (notSame(pref, CameraSettings.KEY_CAMERA_HDR, mSettingOff)) {
             setPreference(CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
             setPreference(CameraSettings.KEY_BEAUTY_MODE, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
+            disableBurstMode();
         } else if (notSame(pref, CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO) ||
                    notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             if (!notSame(pref, CameraSettings.KEY_ASD, mSettingOff)) {
                 setPreference(CameraSettings.KEY_ASD, mSettingOff);
             }
         } else if (notSame(pref, CameraSettings.KEY_BEAUTY_MODE, mSettingOff)) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off");
-        } else if (notSame(pref, CameraSettings.KEY_SLOW_SHUTTER, "slow-shutter-off")) {
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
+        } else if (notSame(pref, CameraSettings.KEY_SLOW_SHUTTER, "0")) {
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
             setPreference(CameraSettings.KEY_SCENE_MODE, Parameters.SCENE_MODE_AUTO);
             setPreference(CameraSettings.KEY_ASD, mSettingOff);
             setPreference(CameraSettings.KEY_BEAUTY_MODE, mSettingOff);
+            disableBurstMode();
+        } else if (notSame(pref, CameraSettings.KEY_TIMER, "0")) {
+            disableBurstMode();
+        } else if (pref.getKey().equals(CameraSettings.KEY_BURST_MODE)) {
+            setPreference(CameraSettings.KEY_TIMER, "0");
+            // Slow shutter is obviously incompatible, and HDR uses the ZSL burst
+            // mechanism already on most cameras.
+            setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, mSettingOff);
+            mUI.updateBurstModeIcon(Integer.valueOf(pref.getValue()));
         }
         super.onSettingChanged(pref);
+    }
+
+    private void disableBurstMode() {
+        setPreference(CameraSettings.KEY_BURST_MODE, "1");
+        mUI.updateBurstModeIcon(1);
     }
 
     @Override

@@ -28,7 +28,6 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
-
 import com.android.camera2.R;
 
 import java.util.Locale;
@@ -68,6 +67,7 @@ public class VideoMenu extends PieController
         // exposure compensation
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
             item = makeItem(CameraSettings.KEY_EXPOSURE);
+            item.setLabel(res.getString(R.string.pref_exposure_label));
             mRenderer.addItem(item);
         }
         // enhance
@@ -86,7 +86,7 @@ public class VideoMenu extends PieController
         }
         // color effect
         final ListPreference colorPref =
-                group.findPreference(CameraSettings.KEY_COLOR_EFFECT);
+                group.findPreference(CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT);
         if (colorPref != null) {
             item = makeItem(R.drawable.ic_tint);
             item.setLabel(res.getString(
@@ -191,10 +191,14 @@ public class VideoMenu extends PieController
         }
         // extra settings popup
         mOtherKeys = new String[] {
+                CameraSettings.KEY_STORAGE,
+                CameraSettings.KEY_POWER_SHUTTER,
+                CameraSettings.KEY_DIS,
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_FOCUS_TIME,
-                CameraSettings.KEY_JPEG_QUALITY
+                CameraSettings.KEY_JPEG_QUALITY,
+                CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
