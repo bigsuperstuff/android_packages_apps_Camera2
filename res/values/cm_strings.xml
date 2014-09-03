@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2013 The CyanogenMod Project
+     Copyright (C) 2013-2014 The CyanogenMod Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
     <!-- Settings screen, dialog choice for 20.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
     <!-- Settings screen, dialog choice for 18 megapixels picture size [CHAR LIMIT=15] -->
@@ -28,18 +27,22 @@
     <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
     <!-- Settings screen, dialog choice for 10.4 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
+    <!-- Settings screen, dialog choice for 10 megapixels picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
     <!-- Settings screen, dialog choice for 9 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
     <!-- Settings screen, dialog choice for 8.2 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
     <!-- Settings screen, dialog choice for 7.7 megapixels picture size [CHAR LIMIT=15] -->
-    <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels (4:3)</string>
+    <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels</string>
     <!-- Settings screen, dialog choice for 6.4 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixels</string>
     <!-- Settings screen, dialog choice for 6 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_6mp">6M pixels</string>
     <!-- Settings screen, dialog choice for 4.5 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
+    <!-- Settings screen, dialog choice for 4 megapixels picture size [CHAR LIMIT=20] -->
+    <string name="pref_camera_picturesize_entry_4mp">4M pixels</string>
     <!-- Settings screen, dialog choice for 3.7 megapixels picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_3_7mp">3.7M pixels</string>
     <!-- Settings screen, dialog choice for 2.5 megapixels picture size [CHAR LIMIT=15] -->
@@ -54,6 +57,8 @@
     <string name="pref_camera_picturesize_entry_xga">XGA</string>
     <!-- Settings screen, dialog choice for SVGA picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+    <!-- Settings screen, dialog choice for nHD picture size [CHAR LIMIT=15] -->
+    <string name="pref_camera_picturesize_entry_nhd">nHD</string>
     <!-- Settings screen, dialog choice for WVGA picture size [CHAR LIMIT=15] -->
     <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
     <!-- Settings screen, dialog choice for WQVGA picture size [CHAR LIMIT=15] -->
@@ -155,14 +160,17 @@
 
     <!-- Slow shutter modes -->
     <string name="pref_camera_slow_shutter_title">Slow shutter</string>
-    <string name="pref_camera_slow_shutter_default" translatable="false">slow-shutter-off</string>
+    <string name="pref_camera_slow_shutter_default" translatable="false">0</string>
     <string name="pref_camera_slow_shutter_entry_off">Off</string>
     <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
-    <string name="pref_camera_slow_shutter_entry_half_second">1/2 second</string>
+    <string name="pref_camera_slow_shutter_entry_half_second">&#189; second</string>
     <string name="pref_camera_slow_shutter_entry_1s">1 second</string>
     <string name="pref_camera_slow_shutter_entry_2s">2 seconds</string>
     <string name="pref_camera_slow_shutter_entry_4s">4 seconds</string>
     <string name="pref_camera_slow_shutter_entry_8s">8 seconds</string>
+
+    <!-- More Settings screen, storage title -->
+    <string name="pref_camera_storage_title">Storage</string>
 
     <!-- ASD -->
     <string name="pref_camera_asd_default" translatable="false">@string/setting_off_value</string>
@@ -170,8 +178,13 @@
     <string name="camera_menu_enhance_label">ENHANCE</string>
     <string name="camera_menu_slow_shutter_label">SLOW SHUTTER</string>
     <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
-    <string name="camera_menu_colorize_label">COLORIZE</string>
-    <string name="camera_menu_effects_label">EFFECTS</string>
     <string name="camera_menu_asd_label">SMART SCENE</string>
 
+    <!-- More Settings screen, power button title -->
+    <string name="pref_camera_power_shutter_title">Power shutter</string>
+    <string name="pref_camera_power_shutter_default" translatable="false">off</string>
+
+    <!-- SuperZoom -->
+    <string name="pref_superzoom_title">Magnify</string>
+    <string name="pref_superzoom_default" translatable="false">off</string>
 </resources>

@@ -42,9 +42,9 @@ import android.view.ViewStub;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.os.SystemProperties;
-import android.graphics.Canvas;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
@@ -100,9 +100,12 @@ public class PhotoUI implements PieListener,
     private ModuleSwitcher mSwitcher;
     private CameraControls mCameraControls;
     private AlertDialog mLocationDialog;
+    private ProgressBar mSpinner;
 
     // Small indicators which show the camera settings in the viewfinder.
     private ImageView mSceneDetectView;
+
+    private ImageView mBurstModeView;
 
     private OnScreenIndicators mOnScreenIndicators;
 
@@ -160,11 +163,14 @@ public class PhotoUI implements PieListener,
         private final byte [] mData;
         private int mOrientation;
         private boolean mMirror;
+        private boolean mZsl;
 
-        public DecodeTask(byte[] data, int orientation, boolean mirror) {
+        public DecodeTask(byte[] data, int orientation, boolean mirror,
+                boolean isZsl) {
             mData = data;
             mOrientation = orientation;
             mMirror = mirror;
+            mZsl = isZsl;
         }
 
         @Override
@@ -186,14 +192,19 @@ public class PhotoUI implements PieListener,
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+            hideWaitAnimation();
             mPreviewThumb.setImageBitmap(bitmap);
-            mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            if (mZsl) {
+                mAnimationManager.startFadeAnimation(mPreviewThumb);
+            } else {
+                mAnimationManager.startCaptureAnimation(mPreviewThumb);
+            }
         }
     }
 
     private class DecodeImageForReview extends DecodeTask {
         public DecodeImageForReview(byte[] data, int orientation, boolean mirror) {
-            super(data, orientation, mirror);
+            super(data, orientation, mirror, false);
         }
 
         @Override
@@ -235,7 +246,9 @@ public class PhotoUI implements PieListener,
             mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
             setSurfaceTextureSizeChangedListener(mFaceView);
         }
+        mSpinner = (ProgressBar) mRootView.findViewById(R.id.wait_spinner);
         mSceneDetectView = (ImageView) mRootView.findViewById(R.id.scene_detect_icon);
+        mBurstModeView = (ImageView) mRootView.findViewById(R.id.burst_mode_icon);
 
         mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
         mAnimationManager = new AnimationManager();
@@ -264,24 +277,6 @@ public class PhotoUI implements PieListener,
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
         mSurfaceTextureSizeListener = listener;
-    }
-
-    public void updatePreviewAspectRatio(float aspectRatio) {
-        if (aspectRatio <= 0) {
-            Log.e(TAG, "Invalid aspect ratio: " + aspectRatio);
-            return;
-        }
-        if (mOrientationResize && CameraUtil.isScreenRotated(mActivity)) {
-            aspectRatio = 1f / aspectRatio;
-        }
-
-        if (mAspectRatio != aspectRatio) {
-            mAspectRatio = aspectRatio;
-            // Update transform matrix with the new aspect ratio.
-            if (mPreviewWidth != 0 && mPreviewHeight != 0) {
-                setTransformMatrix(mPreviewWidth, mPreviewHeight);
-            }
-        }
     }
 
     private void setTransformMatrix(int width, int height) {
@@ -413,9 +408,10 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
-    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror) {
+    public void animateCapture(final byte[] jpegData, int orientation, boolean mirror,
+            boolean isZsl) {
         // Decode jpeg byte array and then animate the jpeg
-        DecodeTask task = new DecodeTask(jpegData, orientation, mirror);
+        DecodeTask task = new DecodeTask(jpegData, orientation, mirror, isZsl);
         task.execute();
     }
 
@@ -499,6 +495,15 @@ public class PhotoUI implements PieListener,
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
+
+    public void hideWaitAnimation() {
+        mSpinner.setVisibility(View.INVISIBLE);
+    }
+
+    public void showWaitAnimation() {
+        mSpinner.setVisibility(View.VISIBLE);
+    }
+
     // called from onResume but only the first time
     public  void initializeFirstTime() {
         // Initialize shutter button.
@@ -577,14 +582,22 @@ public class PhotoUI implements PieListener,
     public void updateOnScreenIndicators(Camera.Parameters params,
             PreferenceGroup group, ComboPreferences prefs) {
         if (params == null || group == null) return;
-        mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
+        String scene = params.getSceneMode();
+        // use the scene indicator for beautify/slowshutter since they
+        // will never coexist with scenemodes or hdr
+        if (CameraSettings.isBeautyModeEnabled(params)) {
+            scene = "beauty";
+        } else if (CameraSettings.isSlowShutterEnabled(params)) {
+            scene = "slow";
+        }
+        mOnScreenIndicators.updateSceneOnScreenIndicator(scene);
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
         int wbIndex = 2;
         ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
         if (pref != null) {
-            wbIndex = pref.getCurrentIndex();
+            wbIndex = pref.getCurrentUnfilteredIndex();
         }
         mOnScreenIndicators.updateWBIndicator(wbIndex);
         boolean location = RecordLocationPreference.get(
@@ -940,20 +953,11 @@ public class PhotoUI implements PieListener,
         mFaceView.setFaces(faces);
     }
 
-
-    public boolean onScaleStepResize(boolean direction)
-    {
+    public boolean onScaleStepResize(boolean direction) {
         if(mGestures != null){
             return mGestures.onScaleStepResize(direction);
         }
         return false;
-    }
-
-    public void onScaleChangeDraw(Canvas canvas)
-    {
-        if(mGestures != null){
-            mGestures.onScaleChangeDraw(canvas);
-        }
     }
 
     @Override
@@ -980,6 +984,29 @@ public class PhotoUI implements PieListener,
             mSceneDetectView.setImageResource(imgs.getResourceId(i, -1));
         }
         mSceneDetectView.setVisibility(View.VISIBLE);
+    }
+
+    public void updateBurstModeIcon(int burstCount) {
+        if (burstCount == 1) {
+            mBurstModeView.setVisibility(View.GONE);
+            return;
+        }
+
+        switch (burstCount) {
+            case 5:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_5);
+                break;
+            case 10:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_10);
+                break;
+            case 15:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_15);
+                break;
+            case 20:
+                mBurstModeView.setImageResource(R.drawable.burst_mode_20);
+                break;
+        }
+        mBurstModeView.setVisibility(View.VISIBLE);
     }
 }
 

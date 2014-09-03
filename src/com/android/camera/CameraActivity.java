@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +40,7 @@ import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -78,6 +80,7 @@ import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.SimpleViewData;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
+import com.android.camera.ui.CameraRootView;
 import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.DetailsDialog;
 import com.android.camera.ui.FilmStripView;
@@ -153,16 +156,20 @@ public class CameraActivity extends Activity
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
     private FrameLayout mAboveFilmstripControlLayout;
-    private View mCameraModuleRootView;
+    private CameraRootView mCameraModuleRootView;
     private FilmStripView mFilmStripView;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
+    private String mStoragePath;
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
+    private boolean mInCameraApp = true;
+    // Keep track of powershutter state
+    public static boolean mPowerShutter = false;
     // This is a hack to speed up the start of SecureCamera.
     private static boolean sFirstStartAfterScreenOn = true;
     private int mLastRawOrientation;
@@ -671,8 +678,7 @@ public class CameraActivity extends Activity
                         | SUPPORT_SHARE | SUPPORT_SHOW_ON_MAP;
                 break;
             case LocalData.LOCAL_VIDEO:
-                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_TRIM
-                        | SUPPORT_SHARE;
+                supported |= SUPPORT_DELETE | SUPPORT_INFO | SUPPORT_SHARE;
                 break;
             case LocalData.LOCAL_PHOTO_SPHERE:
                 supported |= SUPPORT_DELETE | SUPPORT_ROTATE | SUPPORT_INFO
@@ -1084,7 +1090,7 @@ public class CameraActivity extends Activity
         mPlaceholderManager.addTaskListener(mPlaceholderListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
-        mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mCameraModuleRootView = (CameraRootView) rootLayout.findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
@@ -1352,8 +1358,31 @@ public class CameraActivity extends Activity
         return mAutoRotateScreen;
     }
 
+    protected boolean setStoragePath(SharedPreferences prefs) {
+        String storagePath = prefs.getString(CameraSettings.KEY_STORAGE,
+                Environment.getExternalStorageDirectory().toString());
+        Storage.getInstance().setRoot(storagePath);
+
+        if (storagePath.equals(mStoragePath)) {
+            return false;
+        }
+        mStoragePath = storagePath;
+
+        // Sync the swipe preview with the right path
+        if (mDataAdapter != null) {
+            mDataAdapter.flush();
+            mDataAdapter.requestLoad(getContentResolver());
+        }
+
+        // Update the gallery app
+        Intent intent = new Intent("com.android.gallery3d.STORAGE_CHANGE");
+        intent.putExtra(CameraSettings.KEY_STORAGE, storagePath);
+        sendBroadcast(intent);
+        return true;
+    }
+
     protected void updateStorageSpace() {
-        mStorageSpaceBytes = Storage.getAvailableSpace();
+        mStorageSpaceBytes = Storage.getInstance().getAvailableSpace();
     }
 
     protected long getStorageSpaceBytes() {
@@ -1390,6 +1419,19 @@ public class CameraActivity extends Activity
         }
     }
 
+    protected void initPowerShutter(ComboPreferences prefs) {
+        String val = prefs.getString(CameraSettings.KEY_POWER_SHUTTER,
+                getResources().getString(R.string.pref_camera_power_shutter_default));
+        if (!CameraUtil.hasCameraKey()) {
+            mPowerShutter = val.equals(CameraSettings.VALUE_ON);
+        }
+        if (mPowerShutter && mInCameraApp) {
+            getWindow().addFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
+        }
+    }
+
     protected void setResultEx(int resultCode) {
         mResultCodeForTesting = resultCode;
         setResult(resultCode);
@@ -1411,6 +1453,10 @@ public class CameraActivity extends Activity
 
     public boolean isSecureCamera() {
         return mSecureCamera;
+    }
+
+    public boolean isInCameraApp() {
+        return mInCameraApp;
     }
 
     @Override
@@ -1506,6 +1552,10 @@ public class CameraActivity extends Activity
 
     private void openModule(CameraModule module) {
         module.init(this, mCameraModuleRootView);
+        // Re-apply the last fitSystemWindows() run. Our views rely on this, but
+        // the framework's ActionBarOverlayLayout effectively prevents this if the
+        // actual insets haven't changed.
+        mCameraModuleRootView.redoFitSystemWindows();
         module.onResumeBeforeSuper();
         module.onResumeAfterSuper();
     }
@@ -1514,6 +1564,7 @@ public class CameraActivity extends Activity
         module.onPauseBeforeSuper();
         module.onPauseAfterSuper();
         ((ViewGroup) mCameraModuleRootView).removeAllViews();
+        ((ViewGroup) mCameraModuleRootView).clearDisappearingChildren();
     }
 
     private void performDeletion() {
@@ -1641,6 +1692,10 @@ public class CameraActivity extends Activity
      */
     private void setPreviewControlsVisibility(boolean showControls) {
         mCurrentModule.onPreviewFocusChanged(showControls);
+
+        // controls are only shown when the camera app is active
+        // so we can assume to fetch this information from here
+        mInCameraApp = showControls;
     }
 
     // Accessor methods for getting latency times used in performance testing
