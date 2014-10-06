@@ -494,7 +494,6 @@ public class VideoModule implements CameraModule,
     @Override
     public void cancelAutoFocus() {
         if (null != mCameraDevice) {
-            mCameraDevice.cancelAutoFocus();
             setFocusParameters();
         }
     }
@@ -1188,6 +1187,7 @@ public class VideoModule implements CameraModule,
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
                 if (event.getRepeatCount() == 0 && !CameraActivity.mPowerShutter &&
                         !CameraUtil.hasCameraKey()) {
                     mUI.clickShutter();
@@ -1196,6 +1196,7 @@ public class VideoModule implements CameraModule,
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                 if (event.getRepeatCount() == 0 && !CameraActivity.mPowerShutter &&
                         !CameraUtil.hasCameraKey()) {
                     mUI.clickShutter();
@@ -1204,6 +1205,7 @@ public class VideoModule implements CameraModule,
                 }
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 if (event.getRepeatCount() == 0) {
                     mUI.clickShutter();
                 }
@@ -1232,16 +1234,19 @@ public class VideoModule implements CameraModule,
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
                 if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                     mUI.pressShutter(false);
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
                 if (!CameraActivity.mPowerShutter && !CameraUtil.hasCameraKey()) {
                     mUI.pressShutter(false);
                 }
                 return true;
             case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
                 mUI.pressShutter(false);
                 return true;
             case KeyEvent.KEYCODE_POWER:
@@ -2286,6 +2291,9 @@ public class VideoModule implements CameraModule,
         // onFrameAvailable from the old camera may already exist.
         mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
         mUI.updateOnScreenIndicators(mParameters, mPreferences);
+
+        //Display timelapse msg depending upon selection in front/back camera.
+        mUI.showTimeLapseUI(mCaptureTimeLapse);
     }
 
     private void initializeCapabilities() {

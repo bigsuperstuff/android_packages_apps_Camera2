@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">Text</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatru</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Placă-albă</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Poză continuă</string>
   <string name="pref_camera_focusmode_entry_extended">Extins</string>
   <string name="pref_camera_focusmode_entry_facedetect">Detectare față</string>
   <string name="pref_camera_focusmode_entry_facepriority">Prioritate față</string>
@@ -103,7 +102,6 @@
   <string name="pref_camera_burst_entry_15">15 cadre</string>
   <string name="pref_camera_burst_entry_20">20 cadre</string>
   <string name="pref_camera_focustime_title">Durată focalizare tactilă</string>
-  <string name="pref_camera_focustime_summary">Selectare durată focalizare tactilă</string>
   <string name="pref_camera_focustime_entry_5">5s</string>
   <string name="pref_camera_focustime_entry_10">10s</string>
   <string name="pref_camera_focustime_entry_15">15s</string>
@@ -123,10 +121,7 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 secunde</string>
   <string name="pref_camera_storage_title">Spațiu stocare</string>
   <string name="camera_menu_enhance_label">INTENSIFICĂ</string>
-  <string name="camera_menu_slow_shutter_label">DECLANȘARE LENTĂ</string>
   <string name="camera_menu_beauty_mode_label">ÎNFRUMUSEȚARE</string>
-  <string name="camera_menu_colorize_label">COLORARE</string>
-  <string name="camera_menu_effects_label">EFECTE</string>
   <string name="camera_menu_asd_label">SCENĂ INTELIGENTĂ</string>
   <string name="pref_camera_power_shutter_title">Obturator de putere</string>
   <string name="pref_superzoom_title">Mareste</string>

@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">Текст</string>
   <string name="pref_camera_scenemode_entry_theatre">Театр</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Біла дошка</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">Безперервний</string>
   <string name="pref_camera_focusmode_entry_extended">Розширений</string>
   <string name="pref_camera_focusmode_entry_facedetect">Визначення лиць</string>
   <string name="pref_camera_focusmode_entry_facepriority">Фокус на лиця</string>
@@ -103,7 +102,6 @@
   <string name="pref_camera_burst_entry_15">15 знімків</string>
   <string name="pref_camera_burst_entry_20">20 знімків</string>
   <string name="pref_camera_focustime_title">Фокус дотиком</string>
-  <string name="pref_camera_focustime_summary">Виберіть тривалість фокуса дотиком</string>
   <string name="pref_camera_focustime_entry_5">5с</string>
   <string name="pref_camera_focustime_entry_10">10с</string>
   <string name="pref_camera_focustime_entry_15">15с</string>
@@ -123,10 +121,7 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 секунд</string>
   <string name="pref_camera_storage_title">Сховище</string>
   <string name="camera_menu_enhance_label">ПОКРАЩЕННЯ</string>
-  <string name="camera_menu_slow_shutter_label">ПОВІЛЬНИЙ ЗАТВОР</string>
   <string name="camera_menu_beauty_mode_label">ПОКРАЩЕННЯ</string>
-  <string name="camera_menu_colorize_label">РОЗФАРБУВАТИ</string>
-  <string name="camera_menu_effects_label">ЕФЕКТИ</string>
   <string name="camera_menu_asd_label">РОЗПІЗНАВАННЯ УМОВИ ЗЙОМКИ</string>
   <string name="pref_camera_power_shutter_title">Зйомка кноп. живлення</string>
   <string name="pref_superzoom_title">Збільшення</string>

@@ -82,7 +82,6 @@
   <string name="pref_camera_scenemode_entry_text">ده‌ق</string>
   <string name="pref_camera_scenemode_entry_theatre">شانۆ</string>
   <string name="pref_camera_scenemode_entry_whiteboard">ته‌خته‌ی وایتبۆرد</string>
-  <string name="pref_camera_focusmode_entry_continuouspicture">به‌رده‌وامبوونی وێنه‌کان</string>
   <string name="pref_camera_focusmode_entry_extended">فراوانکردن</string>
   <string name="pref_camera_focusmode_entry_facedetect">پشکنینی ڕوو</string>
   <string name="pref_camera_focusmode_entry_facepriority">له‌پێش ڕوو</string>
@@ -103,7 +102,6 @@
   <string name="pref_camera_burst_entry_15">15 گرتن</string>
   <string name="pref_camera_burst_entry_20">20 گرتن</string>
   <string name="pref_camera_focustime_title">ماوه‌ی ده‌ستلێدان بۆ سه‌رنجدان(فۆکوس)</string>
-  <string name="pref_camera_focustime_summary">ده‌ستنیشانکردنی ماوه‌ی ده‌ستلێدان بۆ سه‌رنجدان(فۆکوس)</string>
   <string name="pref_camera_focustime_entry_5">5چرکه‌</string>
   <string name="pref_camera_focustime_entry_10">10چرکه‌</string>
   <string name="pref_camera_focustime_entry_15">15چرکه‌</string>
@@ -123,10 +121,7 @@
   <string name="pref_camera_slow_shutter_entry_8s">8 چرکه‌</string>
   <string name="pref_camera_storage_title">بیرگەی</string>
   <string name="camera_menu_enhance_label">زیادکردن</string>
-  <string name="camera_menu_slow_shutter_label">وێنه‌گرتنێکی خاوتر</string>
   <string name="camera_menu_beauty_mode_label">جوانکاری</string>
-  <string name="camera_menu_colorize_label">ڕه‌نگاوڕه‌نگ</string>
-  <string name="camera_menu_effects_label">کاریگه‌رییه‌کان</string>
   <string name="camera_menu_asd_label">دیمه‌نی به‌هێز</string>
   <string name="pref_camera_power_shutter_title">هێزی وێنه‌ گیره‌ر</string>
   <string name="pref_superzoom_title">زه‌ڕه‌بین</string>
