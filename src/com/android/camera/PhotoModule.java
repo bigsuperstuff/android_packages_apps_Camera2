@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  * Copyright (C) 2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1175,8 +1175,7 @@ public class PhotoModule
                     }
                 }
                 // Animate capture with real jpeg data instead of a preview frame.
-                if (!mBurstShotInProgress && mCameraState != LONGSHOT
-                        && (mReceivedSnapNum == mBurstSnapNum)) {
+                if (!mBurstShotInProgress && mCameraState != LONGSHOT) {
                     mUI.animateCapture(jpegData, orientation, mMirror,
                             (mSnapshotMode == CameraInfo.CAMERA_SUPPORT_MODE_ZSL) &&
                             (mSceneMode != CameraUtil.SCENE_MODE_HDR));
@@ -1429,11 +1428,11 @@ public class PhotoModule
                         new JpegPictureCallback(loc));
             }
         } else {
+            setCameraState(SNAPSHOT_IN_PROGRESS);
             mCameraDevice.takePicture(mHandler,
                     new ShutterCallback(!animateBefore),
                     mRawPictureCallback, mPostViewPictureCallback,
                     new JpegPictureCallback(loc));
-            setCameraState(SNAPSHOT_IN_PROGRESS);
         }
 
         mNamedImages.nameNewImage(mCaptureStartTime);
@@ -1693,7 +1692,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonClick() {
-        int nbBurstShots = CameraSettings.useZSLBurst(mParameters) ? 1 :
+        int nbBurstShots =
                 Integer.valueOf(mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
 
         if (mPaused || mUI.collapseCameraControls()
@@ -2435,12 +2434,12 @@ public class PhotoModule
         String hdr = mPreferences.getString(CameraSettings.KEY_CAMERA_HDR,
                 mActivity.getString(R.string.pref_camera_hdr_default));
         String format = mPreferences.getString(CameraSettings.KEY_PICTURE_FORMAT,
-                mActivity.getString(R.string.pref_camera_picture_format_value_jpeg));
+                PIXEL_FORMAT_JPEG);
         String slowShutter = mPreferences.getString(CameraSettings.KEY_SLOW_SHUTTER,
                 "0");
 
         if (zsl && (!CameraUtil.isHDRWithZSLEnabled() && hdr.equals(mActivity.getString(R.string.setting_on_value))
-                || !format.equals(mActivity.getString(R.string.pref_camera_picture_format_value_jpeg)))
+                || !format.equals(PIXEL_FORMAT_JPEG))
                 || !slowShutter.equals("0")) {
             // Turn off ZSL when taking HDR or RAW or Slow Shutter shots
             zsl = false;
@@ -2646,12 +2645,6 @@ public class PhotoModule
         // Slow shutter
         CameraSettings.setSlowShutter(mParameters, mPreferences.getString(CameraSettings.KEY_SLOW_SHUTTER,
                 mActivity.getString(R.string.pref_camera_slow_shutter_default)));
-
-        // ZSL burst, set before enabling HDR
-        if (CameraSettings.useZSLBurst(mParameters)) {
-            mParameters.set("snapshot-burst-num",
-                    mPreferences.getString(CameraSettings.KEY_BURST_MODE, "1"));
-        }
 
         // SuperZoom
         CameraSettings.setSuperZoom(mParameters, mPreferences.getString(CameraSettings.KEY_SUPERZOOM,
