@@ -16,5 +16,10 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1 مىليون پىكسېل</string>
+  <string name="pref_camera_picturesize_entry_20_7mp">۲۰.۷ مگاپیکسل</string>
+  <string name="pref_camera_picturesize_entry_18mp">۱۸ مگاپیکسل</string>
+  <string name="pref_camera_scenemode_entry_backlight">نور زمینه</string>
+  <string name="pref_camera_scenemode_entry_landscape">چشم‌انداز</string>
+  <string name="pref_camera_coloreffect_entry_washed">کم رنگ</string>
+  <string name="pref_camera_power_shutter_title">شاتر قدرتمند</string>
 </resources>
